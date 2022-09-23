@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input id="input"/>
+<button id="send">send</button>
+<pre id="messages"></pre>
+<script>
+    const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
+
+    eventSource.onopen = (e) => {
+        console.log(e);
+    };
+
+    eventSource.onerror = (e) => {
+        console.log(e);
+    };
+
+    eventSource.onmessage = (e) => {
+        document.querySelector("#messages").appendChild(document.createTextNode(e.data + "\n"));
+    };
+
+    document.querySelector("#send").addEventListener("click", () => {
+        fetch(`/api/publish?message=${document.querySelector("#input").value}`);
+    });
+</script>
+</body>
+</html>

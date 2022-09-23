@@ -18,8 +18,9 @@ public class SseController2 {
 
     @GetMapping("/api/subscribe")
     public SseEmitter subscribe(String id) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(1000000L);
         CLIENTS.put(id, emitter);
+        log.info("connect id: {}", id);
 
         emitter.onTimeout(() -> CLIENTS.remove(id));
         emitter.onCompletion(() -> CLIENTS.remove(id));
@@ -32,10 +33,14 @@ public class SseController2 {
 
         CLIENTS.forEach((id, emitter) -> {
             try {
-                emitter.send(message, MediaType.APPLICATION_JSON);
+                if (message.startsWith(id)){
+                    emitter.send(message, MediaType.APPLICATION_JSON);
+                    log.info("send message id : {}, message: {}", id, message);
+                } else {
+                    log.info("not send message id : {}, message: {}", id, message);
+                }
             } catch (Exception e) {
-                deadIds.add(id);
-                log.warn("disconnected id : {}", id);
+                log.info("throw Exception id : {}", id);
             }
         });
 

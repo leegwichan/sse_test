@@ -9,7 +9,7 @@
 <button id="send">send</button>
 <pre id="messages"></pre>
 <script>
-    const eventSource = new EventSource(`/api/subscribe?id=${Math.random()}`);
+    const eventSource = new EventSource(`/api/subscribe?id=client`);
 
     eventSource.onopen = (e) => {
         console.log(e);
